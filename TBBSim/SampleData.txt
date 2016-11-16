@@ -1,0 +1,11 @@
+[Name] [team]
+[currenthealth]/[maxhealth]
+[traits]
+[status effects]
+Ability:{
+[abilityName] [abilityType]
+[abilityTiming]
+[abilityConditions]
+[abilityEffect]
+}
+//ability block repeats for each entity ability
