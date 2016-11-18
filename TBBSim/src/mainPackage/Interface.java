@@ -144,7 +144,7 @@ public class Interface extends JFrame
 		}
 	}
 	
-	//custom dialogs
+	//custom GUI elements
 	
 	//panel listing entity stats
 	class EntityPanel extends JPanel
@@ -158,14 +158,28 @@ public class Interface extends JFrame
 			this.setPreferredSize(new Dimension(580, 100));
 			this.setMaximumSize(new Dimension(600, 100));
 			this.setBorder(BorderFactory.createLineBorder(Color.RED));
-			//add data fields
+			this.setLayout(new BorderLayout());
+			//name and health fields
+			JPanel header = new JPanel();
+			header.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			nameLabel = new JLabel();
-			this.add(nameLabel,BorderLayout.NORTH);
+			header.add(nameLabel,BorderLayout.NORTH);
 			healthLabel = new JLabel();
-			this.add(healthLabel,BorderLayout.NORTH);
+			header.add(healthLabel,BorderLayout.CENTER);
+			this.add(header, BorderLayout.NORTH);
+			//traits
+			JPanel traits = new JPanel();
+			traits.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+			traits.add(new JLabel("Traits"),BorderLayout.NORTH);
+			this.add(traits,BorderLayout.WEST);
+			//status effects
+			JPanel statuses = new JPanel();
+			statuses.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+			statuses.add(new JLabel("Status Effects"),BorderLayout.EAST);
+			this.add(statuses,BorderLayout.EAST);
 			this.updateStats(entity);
 			
-			/*	Layout Notes:
+			/* Layout Notes:
 			 * North: Entity name, health
 			 * Center: Entity abilities
 			 * West: Entity traits
@@ -176,8 +190,8 @@ public class Interface extends JFrame
 		//updates the panel's stat fields
 		void updateStats(Entity entity) 
 		{
-			nameLabel.setText(entity.name+" "+entity.team);
-			healthLabel.setText(entity.health+"/"+entity.maxHealth+" HP");
+			nameLabel.setText(entity.getName()+" "+entity.getTeam());
+			healthLabel.setText(entity.getHealth()+"/"+entity.getMaximumHealth()+" HP");
 		}
 	}
 	
