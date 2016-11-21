@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /*
  * entity objects, with attributes and abilities
+ * TODO: add ability methods
  */
 public class Entity
 {
@@ -16,12 +17,13 @@ public class Entity
 	ArrayList<Ability> abilities; //list of abilities possessed by this creature
 	//constructs an entity 
 	public Entity(String mname, int mhealth)
-		{
-			name = mname;
-			maxHealth = mhealth;
-			health = mhealth;
-			isActive = false; //entities have a delay on actions after being summoned, may change
-		}
+	{
+		name = mname;
+		maxHealth = mhealth;
+		health = mhealth;
+		isActive = false; //entities have a delay on actions after being summoned, may change
+	}
+	
 	//getter methods
 	public String getName() 
 	{

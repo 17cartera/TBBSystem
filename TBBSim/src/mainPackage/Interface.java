@@ -4,12 +4,14 @@ import gameObjects.Entity;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -25,9 +27,11 @@ import javax.swing.UIManager;
 
 /*
  * main game interface, sends commands back to battlehandler
+ * TODO: GUI style improvements
  */
 public class Interface extends JFrame
 {
+	//I/O systems
 	private static Desktop desktop;
 	private static JFileChooser fileSelector;
 	static 
@@ -42,7 +46,9 @@ public class Interface extends JFrame
 		}
 		catch (Exception e) {e.printStackTrace();}
 	}
+	//instance variables
 	public BattleHandler battleHandler;
+	public EntityList mainList;
 	public Interface(BattleHandler handler)
 
 	{
@@ -50,15 +56,8 @@ public class Interface extends JFrame
 		//construct the main interface
 		Container pane = getContentPane();
 		//create entity list
-		JPanel list = new JPanel();
-		list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
-		//list.setPreferredSize(new Dimension(600,600));
-		JScrollPane listScroll = new JScrollPane(list);
-		listScroll.setPreferredSize(new Dimension(600,600));
-		pane.add(listScroll, BorderLayout.CENTER);
-		//test: create an entity listing
-		Entity testEntity = new Entity("Bob",5000);
-		list.add(new EntityPanel(testEntity));
+		mainList = new EntityList();
+		pane.add(mainList);
 		//create sidebar
 		JPanel sidebar = new JPanel();
 		sidebar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -140,11 +139,61 @@ public class Interface extends JFrame
 		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
-			
+			battleHandler.addEntity(new Entity("Steve", 20));
+			//mainList.updateList(battleHandler.entityList);
 		}
 	}
 	
 	//custom GUI elements
+	
+	//entity list class for the list of entity panels
+	class EntityList extends JScrollPane
+	{
+		JPanel list;
+		EntityList() 
+		{
+			list = new JPanel();
+			list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
+			this.setViewportView(list);
+			this.setPreferredSize(new Dimension(600,600));
+		}
+		//updates the entity list using the new list
+		public void updateList(ArrayList<Entity> entityList) 
+		{
+			list.removeAll();
+			for (int x = 0; x < entityList.size(); x++) 
+			{
+				Entity currentEntity = entityList.get(x);
+				this.addEntity(currentEntity);
+			}
+			this.revalidate();
+		}
+		//adds an entity to the list (deprecated?)
+		void addEntity(Entity entity) 
+		{
+			list.add(new EntityPanel(entity));
+		}
+		//removes a single entity from the list (deprecated?)
+		void removeEntity(Entity entity) 
+		{
+			EntityPanel[] listOfEntityPanels = (EntityPanel[])list.getComponents();
+			boolean entityFound = false; int x = 0;
+			while (entityFound == false) 
+			{
+				EntityPanel currentPanel = listOfEntityPanels[x];
+				if(entity == currentPanel.entity) 
+				{
+					this.remove(currentPanel);
+				}
+				x++;
+				if (x >= listOfEntityPanels.length) 
+				{
+					System.out.println("Entity not found");
+					break;
+				}
+			}
+		}
+	}
 	
 	//panel listing entity stats
 	class EntityPanel extends JPanel
@@ -152,9 +201,9 @@ public class Interface extends JFrame
 		Entity entity;
 		JLabel nameLabel;
 		JLabel healthLabel;
-		EntityPanel(Entity refEntity)
+		EntityPanel(Entity inEntity)
 		{
-			entity = refEntity;
+			entity = inEntity;
 			this.setPreferredSize(new Dimension(580, 100));
 			this.setMaximumSize(new Dimension(600, 100));
 			this.setBorder(BorderFactory.createLineBorder(Color.RED));

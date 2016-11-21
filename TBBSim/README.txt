@@ -1,6 +1,6 @@
 Current Features:
 *Basic GUI
-*File Loading Menu (functionality msising)
+*File Loading Menu (functionality missing)
 
 TODO:
 *Improve GUI
