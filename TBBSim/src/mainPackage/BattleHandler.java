@@ -7,6 +7,7 @@ import java.util.ArrayList;
 /*
  * backend logic system
  * TODO: back-end infrastructure to handle abilities
+ * TEST: A test comment for testing purposes
 */
 public class BattleHandler
 {
