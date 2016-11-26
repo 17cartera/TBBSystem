@@ -97,7 +97,7 @@ public class Interface extends JFrame
 	//button that loads entities from a file
 	class LoadListener extends JButton implements ActionListener 
 	{
-		@Override
+		
 		public void actionPerformed(ActionEvent arg0)
 		{
 			int returnVal = fileSelector.showOpenDialog(this);
@@ -107,7 +107,7 @@ public class Interface extends JFrame
 	//button that saves entities to a file
 	class SaveListener extends JButton implements ActionListener 
 	{
-		@Override
+		
 		public void actionPerformed(ActionEvent arg0)
 		{
 			int returnVal = fileSelector.showSaveDialog(this);
@@ -116,7 +116,7 @@ public class Interface extends JFrame
 	//add an entity to the entity list
 	class AddEntityListener extends JButton implements ActionListener
 	{
-		@Override
+		
 		public void actionPerformed(ActionEvent arg0)
 		{
 			//create a popup window to input entity data
@@ -127,7 +127,7 @@ public class Interface extends JFrame
 	//perform a manual action
 	class ActionButtonListener extends JButton implements ActionListener
 	{
-		@Override
+		
 		public void actionPerformed(ActionEvent arg0)
 		{
 			
@@ -136,7 +136,7 @@ public class Interface extends JFrame
 	//button that starts round of actions
 	class StartRoundListener extends JButton implements ActionListener 
 	{
-		@Override
+		
 		public void actionPerformed(ActionEvent arg0)
 		{
 			battleHandler.addEntity(new Entity("Steve", 20));
