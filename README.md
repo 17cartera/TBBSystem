@@ -4,6 +4,7 @@ A system designed to handle complex turn-based strategy game mechanics. Includes
 # Current Features:
 *Basic GUI
 *File Loading Menu (functionality missing)
+*Secret Test Feature
 
 # TODO:
 *Improve GUI
