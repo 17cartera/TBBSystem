@@ -22,9 +22,28 @@ public class Entity
 		maxHealth = mhealth;
 		health = mhealth;
 		isActive = false; //entities have a delay on actions after being summoned, may change
+		abilities = new ArrayList<Ability>();
 	}
 	
-	//getter methods
+	//adds an ability to the entity
+	public void addAbility(Ability a) 
+	{
+		abilities.add(a);
+	}
+	//returns abilities list
+	public ArrayList<Ability> getAbilities() 
+	{
+		return abilities;
+	}
+	//causes the entity to take damage
+	public void takeDamage(int damageVal) 
+	{
+		health -= damageVal;
+	}
+
+
+	
+	//misc. getter methods
 	public String getName() 
 	{
 		return name;

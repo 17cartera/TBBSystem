@@ -1,10 +1,7 @@
 package mainPackage;
 
-import gameObjects.Entity;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -24,6 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+
+import gameObjects.Ability;
+import gameObjects.Entity;
 
 /*
  * main game interface, sends commands back to battlehandler
@@ -227,7 +227,14 @@ public class Interface extends JFrame
 			statuses.add(new JLabel("Status Effects"),BorderLayout.EAST);
 			this.add(statuses,BorderLayout.EAST);
 			this.updateStats(entity);
-			
+			//abilities
+			ArrayList<Ability> abilities = entity.getAbilities();
+			JPanel abilitiesList = new JPanel();
+			for (int x = 0; x < abilities.size(); x++)
+			{
+				abilitiesList.add(new AbilityPanel(abilities.get(x)));
+			}
+			this.add(abilitiesList,BorderLayout.CENTER);
 			/* Layout Notes:
 			 * North: Entity name, health
 			 * Center: Entity abilities
@@ -243,7 +250,16 @@ public class Interface extends JFrame
 			healthLabel.setText(entity.getHealth()+"/"+entity.getMaximumHealth()+" HP");
 		}
 	}
-	
+	//panel depicting an ability
+	class AbilityPanel extends JPanel 
+	{
+		AbilityPanel(Ability a) 
+		{
+			this.setPreferredSize(new Dimension(500,30));
+			this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+			this.add(new JLabel(a.abilityName));
+		}
+	}
 	//panel for entity data input
 	class EntityInputPanel extends JPanel
 	{

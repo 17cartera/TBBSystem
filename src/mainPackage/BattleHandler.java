@@ -1,8 +1,9 @@
 package mainPackage;
 
-import gameObjects.Entity;
-
 import java.util.ArrayList;
+
+import gameObjects.Ability;
+import gameObjects.Entity;
 
 /*
  * backend logic system
@@ -33,7 +34,12 @@ public class BattleHandler
 	public void testMethod() 
 	{
 		//test method to load in generic entities
-		this.addEntity(new Entity("Steve",20));
+		Entity steve = new Entity("Steve",20);
+		steve.addAbility(new Ability());
+		this.addEntity(steve);
+		Entity alex = new Entity("Alex",20);
+		alex.addAbility(new Ability());
+		this.addEntity(alex);
 	}
 	public void startRound() 
 	{
