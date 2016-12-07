@@ -255,9 +255,13 @@ public class Interface extends JFrame
 	{
 		AbilityPanel(Ability a) 
 		{
-			this.setPreferredSize(new Dimension(500,30));
+			this.setPreferredSize(new Dimension(450,30));
 			this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+			this.setLayout(new BorderLayout());
+			//ability name
 			this.add(new JLabel(a.abilityName));
+			//button to activate ability if valid
+			this.add(new JButton("Activate ability"),BorderLayout.EAST);
 		}
 	}
 	//panel for entity data input

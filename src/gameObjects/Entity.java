@@ -40,8 +40,14 @@ public class Entity
 	{
 		health -= damageVal;
 	}
-
-
+	public void startRound() 
+	{
+		isActive = true;
+	}
+	public void endRound() 
+	{
+		isActive = false;
+	}
 	
 	//misc. getter methods
 	public String getName() 

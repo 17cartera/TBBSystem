@@ -44,9 +44,19 @@ public class BattleHandler
 	public void startRound() 
 	{
 		//entities do start-of-round effects, get actions
+		for (int n = 0; n < entityList.size(); n++) 
+		{
+			Entity entity = entityList.get(n);
+			entity.startRound();
+		}
 	}
 	public void endRound() 
 	{
 		//entities do end-of-round effects, any unused actions are lost
+		for (int n = 0; n < entityList.size(); n++) 
+		{
+			Entity entity = entityList.get(n);
+			entity.endRound();
+		}
 	}
 }
