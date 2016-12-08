@@ -15,6 +15,7 @@ public class Entity
 	String[] traits; //list of traits
 	Boolean isActive; //whether or not the entity can take actions
 	ArrayList<Ability> abilities; //list of abilities possessed by this creature
+	ArrayList<Entity> entitylist; //list of entities that methods can reference (may not be needed)
 	//constructs an entity 
 	public Entity(String mname, int mhealth)
 	{

@@ -34,7 +34,7 @@ public class Ability
 			//extended by subclasses
 		}
 	}
-	//damage effect, damages an entity (can potentially be inverted for healing effects
+	//damage effect, damages an entity (can potentially be inverted for healing effects)
 	public class DamageEffect extends AbilityEffect 
 	{
 		int damage;

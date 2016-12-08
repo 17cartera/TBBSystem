@@ -1,5 +1,8 @@
 package mainPackage;
 
+import gameObjects.Ability;
+import gameObjects.Entity;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -7,6 +10,8 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -21,9 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
-
-import gameObjects.Ability;
-import gameObjects.Entity;
 
 /*
  * main game interface, sends commands back to battlehandler
@@ -62,86 +64,16 @@ public class Interface extends JFrame
 		JPanel sidebar = new JPanel();
 		sidebar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		sidebar.setPreferredSize(new Dimension(200,600));
-		//add controls to sidebar
-		//buttons to save/load entities
-		JButton loadButton = new JButton("Load Entities");
-		loadButton.addActionListener(new LoadListener());
-		sidebar.add(loadButton);
-		JButton saveButton = new JButton("Save Entities");
-		saveButton.addActionListener(new SaveListener());
-		sidebar.add(saveButton);
-		//options button
-		JButton optionsButton = new JButton("  Options  ");
-		sidebar.add(optionsButton);
-		//button to generate entity
-		JButton addEntityButton = new JButton("  Add Entity  ");
-		addEntityButton.addActionListener(new AddEntityListener());
-		sidebar.add(addEntityButton);
-		//button to perform action
-		JButton actionButton = new JButton("Perform Action");
-		actionButton.addActionListener(new ActionButtonListener());
-		sidebar.add(actionButton);
-		//button to start round
-		JButton startRoundButton = new JButton("Start Round");
-		startRoundButton.addActionListener(new StartRoundListener());
-		sidebar.add(startRoundButton);
-		//add sidebar
+		sidebar.add(new LoadButton());
+		sidebar.add(new SaveButton());
+		sidebar.add(new OptionsButton());
+		sidebar.add(new AddEntityButton());
+		sidebar.add(new ActionButton());
+		sidebar.add(new StartRoundButton());
 		pane.add(sidebar, BorderLayout.EAST);
 		//show screen
 		pack();
 		setVisible(true);
-	}
-	
-	//actionlisteners
-	
-	//button that loads entities from a file
-	class LoadListener extends JButton implements ActionListener 
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			int returnVal = fileSelector.showOpenDialog(this);
-			File file = fileSelector.getSelectedFile();
-		}
-	}
-	//button that saves entities to a file
-	class SaveListener extends JButton implements ActionListener 
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			int returnVal = fileSelector.showSaveDialog(this);
-		}
-	}
-	//add an entity to the entity list
-	class AddEntityListener extends JButton implements ActionListener
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			//create a popup window to input entity data
-			EntityInputPanel popup = new EntityInputPanel();
-			JOptionPane.showMessageDialog(null, popup);
-		}
-	}
-	//perform a manual action
-	class ActionButtonListener extends JButton implements ActionListener
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			
-		}
-	}
-	//button that starts round of actions
-	class StartRoundListener extends JButton implements ActionListener 
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			battleHandler.addEntity(new Entity("Steve", 20));
-			//mainList.updateList(battleHandler.entityList);
-		}
 	}
 	
 	//custom GUI elements
@@ -149,6 +81,8 @@ public class Interface extends JFrame
 	//entity list class for the list of entity panels
 	class EntityList extends JScrollPane
 	{
+		public Ability activeAbility = null; //holds the currently selected ability (if any)
+		public Entity activeEntity = null; //holds the currently select entity (if any)
 		JPanel list;
 		EntityList() 
 		{
@@ -243,34 +177,157 @@ public class Interface extends JFrame
 			 * South: Sub-entities (summons)
 			 */
 		}
-		//updates the panel's stat fields
+		//updates the panel's stat fields (may potentially be replaced by just recreating the whole table
 		void updateStats(Entity entity) 
 		{
 			nameLabel.setText(entity.getName()+" "+entity.getTeam());
 			healthLabel.setText(entity.getHealth()+"/"+entity.getMaximumHealth()+" HP");
 		}
-	}
-	//panel depicting an ability
-	class AbilityPanel extends JPanel 
-	{
-		AbilityPanel(Ability a) 
+		//panel depicting an ability
+		class AbilityPanel extends JPanel 
 		{
-			this.setPreferredSize(new Dimension(450,30));
-			this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-			this.setLayout(new BorderLayout());
-			//ability name
-			this.add(new JLabel(a.abilityName));
-			//button to activate ability if valid
-			this.add(new JButton("Activate ability"),BorderLayout.EAST);
+			Ability ability;
+			AbilityPanel(Ability a) 
+			{
+				ability = a;
+				this.setPreferredSize(new Dimension(450,30));
+				this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+				this.setLayout(new BorderLayout());
+				//ability name
+				this.add(new JLabel(a.abilityName));
+				//button to activate ability if valid
+				this.add(new AbilitySelectListener(),BorderLayout.EAST);
+			}
+		}
+		//button that selects an ability
+		class AbilitySelectListener extends JButton implements ActionListener
+		{
+			AbilitySelectListener() 
+			{
+				this.setText("Activate Ability");
+				this.addActionListener(this);
+			}
+			public void actionPerformed(ActionEvent arg0)
+			{
+				Interface.this.mainList.activeAbility = null;
+				//activates selection buttons on all entity panels
+			}
+		}
+		//button that selects an ability target
+		class EntitySelectListener extends JButton implements ActionListener
+		{
+			EntitySelectListener() 
+			{
+				this.setText("Select");
+				this.addActionListener(this);
+			}
+			public void actionPerformed(ActionEvent arg0)
+			{
+				Interface.this.mainList.activeEntity = null;
+				//activates ability on target
+				//then deactivates all entity selectors
+			}
 		}
 	}
+
 	//panel for entity data input
-	class EntityInputPanel extends JPanel
+	class EntityInputInterface extends JPanel
 	{
-		EntityInputPanel() 
+		EntityInputInterface() 
 		{
 			this.add(new JLabel("Hello World"));
 		}
 	}
+	//sidebar buttons
 	
+	//button to load entities from a file
+	class LoadButton extends JButton implements ActionListener 
+	{
+		LoadButton() 
+		{
+			this.setText("Load");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0)
+		{
+			int returnVal = fileSelector.showOpenDialog(this);
+			File file = fileSelector.getSelectedFile();
+		}
+	}
+	//button that saves entities to a file
+	class SaveButton extends JButton implements ActionListener 
+	{
+		SaveButton() 
+		{
+			this.setText("Save");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0)
+		{
+			int returnVal = fileSelector.showSaveDialog(this);
+		}
+	}
+	//button to open options menu
+	class OptionsButton extends JButton implements ActionListener 
+	{
+		OptionsButton() 
+		{
+			this.setText("Options");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0) 
+		{
+			
+		}
+	}
+	//button to add an entity to the entity list
+	class AddEntityButton extends JButton implements ActionListener
+	{
+		AddEntityButton() 
+		{
+			this.setText("Add Entity");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0)
+		{
+			//create a popup window to input entity data
+			EntityInputInterface popup = new EntityInputInterface();
+			JOptionPane.showMessageDialog(null, popup);
+		}
+	}
+	//button to perform a manual action
+	class ActionButton extends JButton implements ActionListener
+	{
+		ActionButton() 
+		{
+			this.setText("Perform Action");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0)
+		{
+			
+		}
+	}
+	//button that starts/ends round of actions
+	class StartRoundButton extends JButton implements ActionListener 
+	{
+		StartRoundButton() 
+		{
+			this.setText("Start Round");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0)
+		{
+			if (battleHandler.roundInProgress == false)
+			{
+				this.setText("End Round");
+				battleHandler.startRound();
+			}
+			else
+			{
+				this.setText("Start Round");
+				battleHandler.endRound();
+			}
+		}
+	}
 }

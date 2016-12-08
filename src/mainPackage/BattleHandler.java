@@ -14,6 +14,7 @@ public class BattleHandler
 {
 	public Interface gameScreen;
 	public ArrayList<Entity> entityList;
+	boolean roundInProgress = false;
 	public static void main(String[] args)
 	{
 		//generate interface
@@ -44,6 +45,7 @@ public class BattleHandler
 	public void startRound() 
 	{
 		//entities do start-of-round effects, get actions
+		roundInProgress = true;
 		for (int n = 0; n < entityList.size(); n++) 
 		{
 			Entity entity = entityList.get(n);
@@ -53,6 +55,7 @@ public class BattleHandler
 	public void endRound() 
 	{
 		//entities do end-of-round effects, any unused actions are lost
+		roundInProgress = false;
 		for (int n = 0; n < entityList.size(); n++) 
 		{
 			Entity entity = entityList.get(n);
