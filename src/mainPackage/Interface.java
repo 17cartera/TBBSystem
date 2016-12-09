@@ -83,6 +83,7 @@ public class Interface extends JFrame
 	{
 		public Ability activeAbility = null; //holds the currently selected ability (if any)
 		public Entity activeEntity = null; //holds the currently select entity (if any)
+		public ArrayList<EntityPanel> entityPanelList = new ArrayList<EntityPanel>();
 		JPanel list;
 		EntityList() 
 		{
@@ -94,37 +95,53 @@ public class Interface extends JFrame
 		//updates the entity list using the new list
 		public void updateList(ArrayList<Entity> entityList) 
 		{
+			entityPanelList = new ArrayList<EntityPanel>();
 			list.removeAll();
 			for (int x = 0; x < entityList.size(); x++) 
 			{
 				Entity currentEntity = entityList.get(x);
-				this.addEntity(currentEntity);
+				this.addEntityPanel(currentEntity);
 			}
 			this.revalidate();
 		}
-		//adds an entity to the list (deprecated?)
-		void addEntity(Entity entity) 
+		//adds an entity to the list
+		void addEntityPanel(Entity entity) 
 		{
-			list.add(new EntityPanel(entity));
+			EntityPanel e = new EntityPanel(entity);
+			list.add(e);
+			entityPanelList.add(e);
 		}
-		//removes a single entity from the list (deprecated?)
+		//removes a single entity from the list (currently broken)
 		void removeEntity(Entity entity) 
 		{
-			EntityPanel[] listOfEntityPanels = (EntityPanel[])list.getComponents();
 			boolean entityFound = false; int x = 0;
 			while (entityFound == false) 
 			{
-				EntityPanel currentPanel = listOfEntityPanels[x];
+				EntityPanel currentPanel = entityPanelList.get(x);
 				if(entity == currentPanel.entity) 
 				{
 					this.remove(currentPanel);
+					this.revalidate();
+					entityFound = true;
 				}
 				x++;
-				if (x >= listOfEntityPanels.length) 
+				if (x >= entityPanelList.size()) 
 				{
 					System.out.println("Entity not found");
 					break;
 				}
+			}
+		}
+		//implements the target selection system (needs a better name)
+		void markAbilityTargets(Ability a) 
+		{
+			activeAbility = a;
+			for (int x = 0; x < entityPanelList.size(); x++) 
+			{
+				EntityPanel currentPanel = entityPanelList.get(x);
+				System.out.println(x);
+				currentPanel.header.add(new JButton("Test"));
+				this.revalidate();
 			}
 		}
 	}
@@ -135,6 +152,10 @@ public class Interface extends JFrame
 		Entity entity;
 		JLabel nameLabel;
 		JLabel healthLabel;
+		JPanel header;
+		JPanel traits;
+		JPanel statuses;
+		JPanel abilitiesList;
 		EntityPanel(Entity inEntity)
 		{
 			entity = inEntity;
@@ -143,7 +164,7 @@ public class Interface extends JFrame
 			this.setBorder(BorderFactory.createLineBorder(Color.RED));
 			this.setLayout(new BorderLayout());
 			//name and health fields
-			JPanel header = new JPanel();
+			header = new JPanel();
 			header.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			nameLabel = new JLabel();
 			header.add(nameLabel,BorderLayout.NORTH);
@@ -151,19 +172,19 @@ public class Interface extends JFrame
 			header.add(healthLabel,BorderLayout.CENTER);
 			this.add(header, BorderLayout.NORTH);
 			//traits
-			JPanel traits = new JPanel();
+			traits = new JPanel();
 			traits.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			traits.add(new JLabel("Traits"),BorderLayout.NORTH);
 			this.add(traits,BorderLayout.WEST);
 			//status effects
-			JPanel statuses = new JPanel();
+			statuses = new JPanel();
 			statuses.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			statuses.add(new JLabel("Status Effects"),BorderLayout.EAST);
 			this.add(statuses,BorderLayout.EAST);
 			this.updateStats(entity);
 			//abilities
 			ArrayList<Ability> abilities = entity.getAbilities();
-			JPanel abilitiesList = new JPanel();
+			abilitiesList = new JPanel();
 			for (int x = 0; x < abilities.size(); x++)
 			{
 				abilitiesList.add(new AbilityPanel(abilities.get(x)));
@@ -183,6 +204,11 @@ public class Interface extends JFrame
 			nameLabel.setText(entity.getName()+" "+entity.getTeam());
 			healthLabel.setText(entity.getHealth()+"/"+entity.getMaximumHealth()+" HP");
 		}
+		//toggles whether to select an ability to target with or whether this entity can be selected
+		void toggleAbilityTargets(boolean abilityActive) 
+		{
+			
+		}
 		//panel depicting an ability
 		class AbilityPanel extends JPanel 
 		{
@@ -196,25 +222,27 @@ public class Interface extends JFrame
 				//ability name
 				this.add(new JLabel(a.abilityName));
 				//button to activate ability if valid
-				this.add(new AbilitySelectListener(),BorderLayout.EAST);
+				this.add(new AbilitySelectListener(ability),BorderLayout.EAST);
 			}
 		}
 		//button that selects an ability
 		class AbilitySelectListener extends JButton implements ActionListener
 		{
-			AbilitySelectListener() 
+			Ability ability;
+			AbilitySelectListener(Ability a) 
 			{
+				ability = a;
 				this.setText("Activate Ability");
 				this.addActionListener(this);
 			}
 			public void actionPerformed(ActionEvent arg0)
 			{
-				Interface.this.mainList.activeAbility = null;
+				Interface.this.mainList.markAbilityTargets(ability);
 				//activates selection buttons on all entity panels
 			}
 		}
 		//button that selects an ability target
-		class EntitySelectListener extends JButton implements ActionListener
+		public class EntitySelectListener extends JButton implements ActionListener
 		{
 			EntitySelectListener() 
 			{

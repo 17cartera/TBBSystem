@@ -41,6 +41,9 @@ public class BattleHandler
 		Entity alex = new Entity("Alex",20);
 		alex.addAbility(new Ability());
 		this.addEntity(alex);
+		//ability test code
+		steve.getAbilities().get(0).activateAbility(alex);
+		gameScreen.mainList.updateList(entityList);
 	}
 	public void startRound() 
 	{

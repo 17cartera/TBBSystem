@@ -25,6 +25,10 @@ public class Ability
 		timing = t;
 		effect = e;
 	}
+	public void activateAbility(Entity target) 
+	{
+		effect.activateEffect(target);
+	}
 	//class for an ability's effect
 	public class AbilityEffect 
 	{
