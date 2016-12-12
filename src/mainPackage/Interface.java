@@ -10,8 +10,6 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -33,7 +31,9 @@ import javax.swing.UIManager;
  */
 public class Interface extends JFrame
 {
+	private static final long serialVersionUID = 1L;
 	//I/O systems
+	@SuppressWarnings("unused")
 	private static Desktop desktop;
 	private static JFileChooser fileSelector;
 	static 
@@ -81,6 +81,7 @@ public class Interface extends JFrame
 	//entity list class for the list of entity panels
 	class EntityList extends JScrollPane
 	{
+		private static final long serialVersionUID = 1L;
 		public Ability activeAbility = null; //holds the currently selected ability (if any)
 		public Entity activeEntity = null; //holds the currently select entity (if any)
 		public ArrayList<EntityPanel> entityPanelList = new ArrayList<EntityPanel>();
@@ -133,29 +134,53 @@ public class Interface extends JFrame
 			}
 		}
 		//implements the target selection system (needs a better name)
-		void markAbilityTargets(Ability a) 
+		void activateTargetting(Ability a) 
 		{
 			activeAbility = a;
 			for (int x = 0; x < entityPanelList.size(); x++) 
 			{
 				EntityPanel currentPanel = entityPanelList.get(x);
-				System.out.println(x);
-				currentPanel.header.add(new JButton("Test"));
-				this.revalidate();
+				currentPanel.toggleEntitySelectors();
 			}
+			this.revalidate();
+		}
+		//disables target selection system
+		void deactivateTargetting() 
+		{
+			for (int x = 0; x < entityPanelList.size(); x++) 
+			{
+				EntityPanel currentPanel = entityPanelList.get(x);
+				currentPanel.toggleAbilitySelectors();
+			}
+			this.revalidate();
+		}
+		//triggers an ability onto a target, and then resets the target selection system
+		void triggerAbility(Entity e) 
+		{
+			activeEntity = e;
+			activeAbility.activateAbility(activeEntity);
+			System.out.println("Target health: " + activeEntity.getHealth()); //test line
+			this.revalidate();
+			this.deactivateTargetting();
 		}
 	}
-	
 	//panel listing entity stats
 	class EntityPanel extends JPanel
 	{
+		private static final long serialVersionUID = 1L;
 		Entity entity;
+		//header objects
+		JPanel header;
 		JLabel nameLabel;
 		JLabel healthLabel;
-		JPanel header;
+		EntitySelectListener targetButton;
+		//traits objects
 		JPanel traits;
+		//status effects objects
 		JPanel statuses;
+		//abilities list objects
 		JPanel abilitiesList;
+		ArrayList<AbilityPanel> abilityPanelList = new ArrayList<AbilityPanel>();
 		EntityPanel(Entity inEntity)
 		{
 			entity = inEntity;
@@ -170,6 +195,8 @@ public class Interface extends JFrame
 			header.add(nameLabel,BorderLayout.NORTH);
 			healthLabel = new JLabel();
 			header.add(healthLabel,BorderLayout.CENTER);
+			targetButton = new EntitySelectListener(this.entity);
+			header.add(targetButton);
 			this.add(header, BorderLayout.NORTH);
 			//traits
 			traits = new JPanel();
@@ -187,7 +214,9 @@ public class Interface extends JFrame
 			abilitiesList = new JPanel();
 			for (int x = 0; x < abilities.size(); x++)
 			{
-				abilitiesList.add(new AbilityPanel(abilities.get(x)));
+				AbilityPanel abilityPanel = new AbilityPanel(abilities.get(x));
+				abilityPanelList.add(abilityPanel);
+				abilitiesList.add(abilityPanel);
 			}
 			this.add(abilitiesList,BorderLayout.CENTER);
 			/* Layout Notes:
@@ -198,21 +227,38 @@ public class Interface extends JFrame
 			 * South: Sub-entities (summons)
 			 */
 		}
-		//updates the panel's stat fields (may potentially be replaced by just recreating the whole table
+		//updates the panel's stat fields (may be deprecated later)
 		void updateStats(Entity entity) 
 		{
 			nameLabel.setText(entity.getName()+" "+entity.getTeam());
 			healthLabel.setText(entity.getHealth()+"/"+entity.getMaximumHealth()+" HP");
 		}
-		//toggles whether to select an ability to target with or whether this entity can be selected
-		void toggleAbilityTargets(boolean abilityActive) 
+		//enables entityselectlistener and disables abilityselectlisteners
+		void toggleEntitySelectors() 
 		{
-			
+			this.targetButton.setEnabled(true);
+			for (int x = 0; x < abilityPanelList.size(); x++) 
+			{
+				AbilityPanel currentPanel = abilityPanelList.get(x);
+				currentPanel.activateButton.setEnabled(false);
+			}
+		}
+		//disables entityselectlistener and enables abilityselectlisteners
+		void toggleAbilitySelectors() 
+		{
+			this.targetButton.setEnabled(false);
+			for (int x = 0; x < abilityPanelList.size(); x++) 
+			{
+				AbilityPanel currentPanel = abilityPanelList.get(x);
+				currentPanel.activateButton.setEnabled(true);
+			}
 		}
 		//panel depicting an ability
 		class AbilityPanel extends JPanel 
 		{
+			private static final long serialVersionUID = 1L;
 			Ability ability;
+			AbilitySelectListener activateButton;
 			AbilityPanel(Ability a) 
 			{
 				ability = a;
@@ -222,12 +268,14 @@ public class Interface extends JFrame
 				//ability name
 				this.add(new JLabel(a.abilityName));
 				//button to activate ability if valid
-				this.add(new AbilitySelectListener(ability),BorderLayout.EAST);
+				activateButton = new AbilitySelectListener(ability);
+				this.add(activateButton,BorderLayout.EAST);
 			}
 		}
 		//button that selects an ability
 		class AbilitySelectListener extends JButton implements ActionListener
 		{
+			private static final long serialVersionUID = 1L;
 			Ability ability;
 			AbilitySelectListener(Ability a) 
 			{
@@ -237,23 +285,25 @@ public class Interface extends JFrame
 			}
 			public void actionPerformed(ActionEvent arg0)
 			{
-				Interface.this.mainList.markAbilityTargets(ability);
+				Interface.this.mainList.activateTargetting(ability);
 				//activates selection buttons on all entity panels
 			}
 		}
 		//button that selects an ability target
 		public class EntitySelectListener extends JButton implements ActionListener
 		{
-			EntitySelectListener() 
+			private static final long serialVersionUID = 1L;
+			Entity entity;
+			EntitySelectListener(Entity e) 
 			{
+				entity = e;
 				this.setText("Select");
 				this.addActionListener(this);
 			}
 			public void actionPerformed(ActionEvent arg0)
 			{
-				Interface.this.mainList.activeEntity = null;
-				//activates ability on target
-				//then deactivates all entity selectors
+				Interface.this.mainList.triggerAbility(entity);
+				EntityPanel.this.updateStats(EntityPanel.this.entity);
 			}
 		}
 	}
@@ -261,6 +311,7 @@ public class Interface extends JFrame
 	//panel for entity data input
 	class EntityInputInterface extends JPanel
 	{
+		private static final long serialVersionUID = 1L;
 		EntityInputInterface() 
 		{
 			this.add(new JLabel("Hello World"));
@@ -271,11 +322,13 @@ public class Interface extends JFrame
 	//button to load entities from a file
 	class LoadButton extends JButton implements ActionListener 
 	{
+		private static final long serialVersionUID = 1L;
 		LoadButton() 
 		{
 			this.setText("Load");
 			this.addActionListener(this);
 		}
+		@SuppressWarnings("unused")
 		public void actionPerformed(ActionEvent arg0)
 		{
 			int returnVal = fileSelector.showOpenDialog(this);
@@ -285,11 +338,13 @@ public class Interface extends JFrame
 	//button that saves entities to a file
 	class SaveButton extends JButton implements ActionListener 
 	{
+		private static final long serialVersionUID = 1L;
 		SaveButton() 
 		{
 			this.setText("Save");
 			this.addActionListener(this);
 		}
+		@SuppressWarnings("unused")
 		public void actionPerformed(ActionEvent arg0)
 		{
 			int returnVal = fileSelector.showSaveDialog(this);
@@ -298,6 +353,7 @@ public class Interface extends JFrame
 	//button to open options menu
 	class OptionsButton extends JButton implements ActionListener 
 	{
+		private static final long serialVersionUID = 1L;
 		OptionsButton() 
 		{
 			this.setText("Options");
@@ -311,6 +367,7 @@ public class Interface extends JFrame
 	//button to add an entity to the entity list
 	class AddEntityButton extends JButton implements ActionListener
 	{
+		private static final long serialVersionUID = 1L;
 		AddEntityButton() 
 		{
 			this.setText("Add Entity");
@@ -326,6 +383,7 @@ public class Interface extends JFrame
 	//button to perform a manual action
 	class ActionButton extends JButton implements ActionListener
 	{
+		private static final long serialVersionUID = 1L;
 		ActionButton() 
 		{
 			this.setText("Perform Action");
@@ -339,6 +397,7 @@ public class Interface extends JFrame
 	//button that starts/ends round of actions
 	class StartRoundButton extends JButton implements ActionListener 
 	{
+		private static final long serialVersionUID = 1L;
 		StartRoundButton() 
 		{
 			this.setText("Start Round");

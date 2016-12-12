@@ -40,11 +40,22 @@ public class Entity
 	public void takeDamage(int damageVal) 
 	{
 		health -= damageVal;
+		checkDeath();
 	}
+	//checks if entity has died
+	public void checkDeath() 
+	{
+		if (health <= 0) 
+		{
+			System.out.println(name + " has died");
+		}
+	}
+	//sets isActive to true
 	public void startRound() 
 	{
 		isActive = true;
 	}
+	//sets isActive to false
 	public void endRound() 
 	{
 		isActive = false;
