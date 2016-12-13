@@ -1,7 +1,8 @@
 package gameObjects;
 /*
  * Class containing data on abilities possessed by entities
- * TODO: Implement ability subclasses
+ * TODO: Implement ability subclasses for effects
+ * TODO: Improve referencing, potentially integrate into Entity class
  */
 public class Ability
 {

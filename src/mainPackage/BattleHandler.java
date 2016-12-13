@@ -7,8 +7,7 @@ import gameObjects.Entity;
 
 /*
  * backend logic system
- * TODO: back-end infrastructure to handle abilities
- * TEST: A test comment for testing purposes
+ * TODO: improve things
 */
 public class BattleHandler
 {
@@ -35,14 +34,13 @@ public class BattleHandler
 	public void testMethod() 
 	{
 		//test method to load in generic entities
-		Entity steve = new Entity("Steve",20);
+		Entity steve = new Entity(entityList,"Steve",20);
 		steve.addAbility(new Ability());
 		this.addEntity(steve);
-		Entity alex = new Entity("Alex",20);
+		Entity alex = new Entity(entityList,"Alex",20);
 		alex.addAbility(new Ability());
 		this.addEntity(alex);
 		//ability test code
-		steve.getAbilities().get(0).activateAbility(alex);
 		gameScreen.mainList.updateList(entityList);
 	}
 	public void startRound() 
@@ -55,13 +53,20 @@ public class BattleHandler
 			entity.startRound();
 		}
 	}
-	public void endRound() 
+	public void endRound()
 	{
 		//entities do end-of-round effects, any unused actions are lost
 		roundInProgress = false;
 		for (int n = 0; n < entityList.size(); n++) 
 		{
 			Entity entity = entityList.get(n);
+			if (entity.isDead())
+			{
+				entityList.remove(entity);
+				gameScreen.mainList.updateList(entityList);
+				System.out.println(entityList.size() + " Entities remaining");
+			}
+			else
 			entity.endRound();
 		}
 	}

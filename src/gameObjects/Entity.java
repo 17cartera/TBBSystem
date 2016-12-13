@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /*
  * entity objects, with attributes and abilities
- * TODO: add ability methods
+ * TODO: add ability-related methods
  */
 public class Entity
 {
@@ -13,17 +13,17 @@ public class Entity
 	int maxHealth; //maximum health of entity
 	int health; //current health of entity
 	String[] traits; //list of traits
-	Boolean isActive; //whether or not the entity can take actions
-	ArrayList<Ability> abilities; //list of abilities possessed by this creature
-	ArrayList<Entity> entitylist; //list of entities that methods can reference (may not be needed)
+	boolean isActive = false; //whether or not the entity can take actions (starts as false)
+	boolean isDead = false; //whether or not the entity is dead
+	ArrayList<Ability> abilities = new ArrayList<Ability>();; //list of abilities possessed by this creature
+	ArrayList<Entity> entityList; //list of entities that methods can reference (may not be needed)
 	//constructs an entity 
-	public Entity(String mname, int mhealth)
+	public Entity(ArrayList<Entity> refs, String mname, int mhealth)
 	{
+		entityList = refs;
 		name = mname;
 		maxHealth = mhealth;
 		health = mhealth;
-		isActive = false; //entities have a delay on actions after being summoned, may change
-		abilities = new ArrayList<Ability>();
 	}
 	
 	//adds an ability to the entity
@@ -42,20 +42,22 @@ public class Entity
 		health -= damageVal;
 		checkDeath();
 	}
-	//checks if entity has died
+	//checks if entity has died, and handles death if the entity is dead
 	public void checkDeath() 
 	{
 		if (health <= 0) 
 		{
 			System.out.println(name + " has died");
+			isDead = true;
+			//dead entities are not removed immediately due to abilities relating to dead entities
 		}
 	}
-	//sets isActive to true
+	//sets isActive to true (will later run passives)
 	public void startRound() 
 	{
 		isActive = true;
 	}
-	//sets isActive to false
+	//sets isActive to false (will later run passives)
 	public void endRound() 
 	{
 		isActive = false;
@@ -85,6 +87,10 @@ public class Entity
 	public boolean canAct() 
 	{
 		return isActive;
+	}
+	public boolean isDead() 
+	{
+		return isDead;
 	}
 	//setter methods
 	public void setName(String newName) 

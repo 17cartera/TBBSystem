@@ -27,7 +27,7 @@ import javax.swing.UIManager;
 
 /*
  * main game interface, sends commands back to battlehandler
- * TODO: GUI style improvements
+ * TODO: GUI improvements, handle more mechanics
  */
 public class Interface extends JFrame
 {
@@ -98,6 +98,7 @@ public class Interface extends JFrame
 		{
 			entityPanelList = new ArrayList<EntityPanel>();
 			list.removeAll();
+			this.repaint();
 			for (int x = 0; x < entityList.size(); x++) 
 			{
 				Entity currentEntity = entityList.get(x);
@@ -140,17 +141,19 @@ public class Interface extends JFrame
 			for (int x = 0; x < entityPanelList.size(); x++) 
 			{
 				EntityPanel currentPanel = entityPanelList.get(x);
-				currentPanel.toggleEntitySelectors();
+				currentPanel.enableEntitySelectors();
+				currentPanel.disableAbilitySelectors();
 			}
 			this.revalidate();
 		}
-		//disables target selection system
+		//disables target selection system (needs a better name)
 		void deactivateTargetting() 
 		{
 			for (int x = 0; x < entityPanelList.size(); x++) 
 			{
 				EntityPanel currentPanel = entityPanelList.get(x);
-				currentPanel.toggleAbilitySelectors();
+				currentPanel.disableEntitySelectors();
+				currentPanel.enableAbilitySelectors();
 			}
 			this.revalidate();
 		}
@@ -233,26 +236,32 @@ public class Interface extends JFrame
 			nameLabel.setText(entity.getName()+" "+entity.getTeam());
 			healthLabel.setText(entity.getHealth()+"/"+entity.getMaximumHealth()+" HP");
 		}
-		//enables entityselectlistener and disables abilityselectlisteners
-		void toggleEntitySelectors() 
+		//methods to enable and disable interface buttons
+		void enableEntitySelectors() 
 		{
 			this.targetButton.setEnabled(true);
-			for (int x = 0; x < abilityPanelList.size(); x++) 
-			{
-				AbilityPanel currentPanel = abilityPanelList.get(x);
-				currentPanel.activateButton.setEnabled(false);
-			}
 		}
-		//disables entityselectlistener and enables abilityselectlisteners
-		void toggleAbilitySelectors() 
+		void disableEntitySelectors() 
 		{
 			this.targetButton.setEnabled(false);
+		}
+		void enableAbilitySelectors() 
+		{
 			for (int x = 0; x < abilityPanelList.size(); x++) 
 			{
 				AbilityPanel currentPanel = abilityPanelList.get(x);
 				currentPanel.activateButton.setEnabled(true);
 			}
 		}
+		void disableAbilitySelectors() 
+		{
+			for (int x = 0; x < abilityPanelList.size(); x++) 
+			{
+				AbilityPanel currentPanel = abilityPanelList.get(x);
+				currentPanel.activateButton.setEnabled(false);
+			}
+		}
+		
 		//panel depicting an ability
 		class AbilityPanel extends JPanel 
 		{
@@ -273,6 +282,7 @@ public class Interface extends JFrame
 			}
 		}
 		//button that selects an ability
+		//TODO: should not be enabled if the entity cannot take an action
 		class AbilitySelectListener extends JButton implements ActionListener
 		{
 			private static final long serialVersionUID = 1L;
@@ -281,6 +291,7 @@ public class Interface extends JFrame
 			{
 				ability = a;
 				this.setText("Activate Ability");
+				this.setEnabled(false);
 				this.addActionListener(this);
 			}
 			public void actionPerformed(ActionEvent arg0)
@@ -298,6 +309,7 @@ public class Interface extends JFrame
 			{
 				entity = e;
 				this.setText("Select");
+				this.setEnabled(false);
 				this.addActionListener(this);
 			}
 			public void actionPerformed(ActionEvent arg0)
@@ -318,7 +330,6 @@ public class Interface extends JFrame
 		}
 	}
 	//sidebar buttons
-	
 	//button to load entities from a file
 	class LoadButton extends JButton implements ActionListener 
 	{
