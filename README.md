@@ -7,12 +7,13 @@ A system designed to handle complex turn-based strategy game mechanics. Includes
 *Basic GUI
 *File Loading Menu (functionality missing)
 *Secret Test Feature
-*Backend Entity Mechanics
+*Basic entity mechanics
 
 # TODO:
 *Improve GUI
-*Actually load files
-*Add (simple) entity mechanics
+*Load/Save Files
+*More ability mechanics
 
 # Today's Goal:
-*Implement a system that allows for ability targeting
+*Fix GUI bugs
+*Improve functionality for targets dying
