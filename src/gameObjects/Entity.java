@@ -15,6 +15,7 @@ public class Entity
 	String[] traits; //list of traits
 	Boolean isActive; //whether or not the entity can take actions
 	ArrayList<Ability> abilities; //list of abilities possessed by this creature
+	ArrayList<Entity> entitylist; //list of entities that methods can reference (may not be needed)
 	//constructs an entity 
 	public Entity(String mname, int mhealth)
 	{
@@ -22,9 +23,45 @@ public class Entity
 		maxHealth = mhealth;
 		health = mhealth;
 		isActive = false; //entities have a delay on actions after being summoned, may change
+		abilities = new ArrayList<Ability>();
 	}
 	
-	//getter methods
+	//adds an ability to the entity
+	public void addAbility(Ability a) 
+	{
+		abilities.add(a);
+	}
+	//returns abilities list
+	public ArrayList<Ability> getAbilities() 
+	{
+		return abilities;
+	}
+	//causes the entity to take damage
+	public void takeDamage(int damageVal) 
+	{
+		health -= damageVal;
+		checkDeath();
+	}
+	//checks if entity has died
+	public void checkDeath() 
+	{
+		if (health <= 0) 
+		{
+			System.out.println(name + " has died");
+		}
+	}
+	//sets isActive to true
+	public void startRound() 
+	{
+		isActive = true;
+	}
+	//sets isActive to false
+	public void endRound() 
+	{
+		isActive = false;
+	}
+	
+	//misc. getter methods
 	public String getName() 
 	{
 		return name;

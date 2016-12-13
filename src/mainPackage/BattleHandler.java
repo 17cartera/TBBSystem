@@ -1,8 +1,9 @@
 package mainPackage;
 
-import gameObjects.Entity;
-
 import java.util.ArrayList;
+
+import gameObjects.Ability;
+import gameObjects.Entity;
 
 /*
  * backend logic system
@@ -13,6 +14,7 @@ public class BattleHandler
 {
 	public Interface gameScreen;
 	public ArrayList<Entity> entityList;
+	boolean roundInProgress = false;
 	public static void main(String[] args)
 	{
 		//generate interface
@@ -33,14 +35,34 @@ public class BattleHandler
 	public void testMethod() 
 	{
 		//test method to load in generic entities
-		this.addEntity(new Entity("Steve",20));
+		Entity steve = new Entity("Steve",20);
+		steve.addAbility(new Ability());
+		this.addEntity(steve);
+		Entity alex = new Entity("Alex",20);
+		alex.addAbility(new Ability());
+		this.addEntity(alex);
+		//ability test code
+		steve.getAbilities().get(0).activateAbility(alex);
+		gameScreen.mainList.updateList(entityList);
 	}
 	public void startRound() 
 	{
 		//entities do start-of-round effects, get actions
+		roundInProgress = true;
+		for (int n = 0; n < entityList.size(); n++) 
+		{
+			Entity entity = entityList.get(n);
+			entity.startRound();
+		}
 	}
 	public void endRound() 
 	{
 		//entities do end-of-round effects, any unused actions are lost
+		roundInProgress = false;
+		for (int n = 0; n < entityList.size(); n++) 
+		{
+			Entity entity = entityList.get(n);
+			entity.endRound();
+		}
 	}
 }

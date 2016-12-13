@@ -1,10 +1,10 @@
 package mainPackage;
 
+import gameObjects.Ability;
 import gameObjects.Entity;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -31,7 +31,9 @@ import javax.swing.UIManager;
  */
 public class Interface extends JFrame
 {
+	private static final long serialVersionUID = 1L;
 	//I/O systems
+	@SuppressWarnings("unused")
 	private static Desktop desktop;
 	private static JFileChooser fileSelector;
 	static 
@@ -62,86 +64,16 @@ public class Interface extends JFrame
 		JPanel sidebar = new JPanel();
 		sidebar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		sidebar.setPreferredSize(new Dimension(200,600));
-		//add controls to sidebar
-		//buttons to save/load entities
-		JButton loadButton = new JButton("Load Entities");
-		loadButton.addActionListener(new LoadListener());
-		sidebar.add(loadButton);
-		JButton saveButton = new JButton("Save Entities");
-		saveButton.addActionListener(new SaveListener());
-		sidebar.add(saveButton);
-		//options button
-		JButton optionsButton = new JButton("  Options  ");
-		sidebar.add(optionsButton);
-		//button to generate entity
-		JButton addEntityButton = new JButton("  Add Entity  ");
-		addEntityButton.addActionListener(new AddEntityListener());
-		sidebar.add(addEntityButton);
-		//button to perform action
-		JButton actionButton = new JButton("Perform Action");
-		actionButton.addActionListener(new ActionButtonListener());
-		sidebar.add(actionButton);
-		//button to start round
-		JButton startRoundButton = new JButton("Start Round");
-		startRoundButton.addActionListener(new StartRoundListener());
-		sidebar.add(startRoundButton);
-		//add sidebar
+		sidebar.add(new LoadButton());
+		sidebar.add(new SaveButton());
+		sidebar.add(new OptionsButton());
+		sidebar.add(new AddEntityButton());
+		sidebar.add(new ActionButton());
+		sidebar.add(new StartRoundButton());
 		pane.add(sidebar, BorderLayout.EAST);
 		//show screen
 		pack();
 		setVisible(true);
-	}
-	
-	//actionlisteners
-	
-	//button that loads entities from a file
-	class LoadListener extends JButton implements ActionListener 
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			int returnVal = fileSelector.showOpenDialog(this);
-			File file = fileSelector.getSelectedFile();
-		}
-	}
-	//button that saves entities to a file
-	class SaveListener extends JButton implements ActionListener 
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			int returnVal = fileSelector.showSaveDialog(this);
-		}
-	}
-	//add an entity to the entity list
-	class AddEntityListener extends JButton implements ActionListener
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			//create a popup window to input entity data
-			EntityInputPanel popup = new EntityInputPanel();
-			JOptionPane.showMessageDialog(null, popup);
-		}
-	}
-	//perform a manual action
-	class ActionButtonListener extends JButton implements ActionListener
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			
-		}
-	}
-	//button that starts round of actions
-	class StartRoundListener extends JButton implements ActionListener 
-	{
-		
-		public void actionPerformed(ActionEvent arg0)
-		{
-			battleHandler.addEntity(new Entity("Steve", 20));
-			//mainList.updateList(battleHandler.entityList);
-		}
 	}
 	
 	//custom GUI elements
@@ -149,6 +81,10 @@ public class Interface extends JFrame
 	//entity list class for the list of entity panels
 	class EntityList extends JScrollPane
 	{
+		private static final long serialVersionUID = 1L;
+		public Ability activeAbility = null; //holds the currently selected ability (if any)
+		public Entity activeEntity = null; //holds the currently select entity (if any)
+		public ArrayList<EntityPanel> entityPanelList = new ArrayList<EntityPanel>();
 		JPanel list;
 		EntityList() 
 		{
@@ -160,47 +96,91 @@ public class Interface extends JFrame
 		//updates the entity list using the new list
 		public void updateList(ArrayList<Entity> entityList) 
 		{
+			entityPanelList = new ArrayList<EntityPanel>();
 			list.removeAll();
 			for (int x = 0; x < entityList.size(); x++) 
 			{
 				Entity currentEntity = entityList.get(x);
-				this.addEntity(currentEntity);
+				this.addEntityPanel(currentEntity);
 			}
 			this.revalidate();
 		}
-		//adds an entity to the list (deprecated?)
-		void addEntity(Entity entity) 
+		//adds an entity to the list
+		void addEntityPanel(Entity entity) 
 		{
-			list.add(new EntityPanel(entity));
+			EntityPanel e = new EntityPanel(entity);
+			list.add(e);
+			entityPanelList.add(e);
 		}
-		//removes a single entity from the list (deprecated?)
+		//removes a single entity from the list (currently broken)
 		void removeEntity(Entity entity) 
 		{
-			EntityPanel[] listOfEntityPanels = (EntityPanel[])list.getComponents();
 			boolean entityFound = false; int x = 0;
 			while (entityFound == false) 
 			{
-				EntityPanel currentPanel = listOfEntityPanels[x];
+				EntityPanel currentPanel = entityPanelList.get(x);
 				if(entity == currentPanel.entity) 
 				{
 					this.remove(currentPanel);
+					this.revalidate();
+					entityFound = true;
 				}
 				x++;
-				if (x >= listOfEntityPanels.length) 
+				if (x >= entityPanelList.size()) 
 				{
 					System.out.println("Entity not found");
 					break;
 				}
 			}
 		}
+		//implements the target selection system (needs a better name)
+		void activateTargetting(Ability a) 
+		{
+			activeAbility = a;
+			for (int x = 0; x < entityPanelList.size(); x++) 
+			{
+				EntityPanel currentPanel = entityPanelList.get(x);
+				currentPanel.toggleEntitySelectors();
+			}
+			this.revalidate();
+		}
+		//disables target selection system
+		void deactivateTargetting() 
+		{
+			for (int x = 0; x < entityPanelList.size(); x++) 
+			{
+				EntityPanel currentPanel = entityPanelList.get(x);
+				currentPanel.toggleAbilitySelectors();
+			}
+			this.revalidate();
+		}
+		//triggers an ability onto a target, and then resets the target selection system
+		void triggerAbility(Entity e) 
+		{
+			activeEntity = e;
+			activeAbility.activateAbility(activeEntity);
+			System.out.println("Target health: " + activeEntity.getHealth()); //test line
+			this.revalidate();
+			this.deactivateTargetting();
+		}
 	}
-	
 	//panel listing entity stats
 	class EntityPanel extends JPanel
 	{
+		private static final long serialVersionUID = 1L;
 		Entity entity;
+		//header objects
+		JPanel header;
 		JLabel nameLabel;
 		JLabel healthLabel;
+		EntitySelectListener targetButton;
+		//traits objects
+		JPanel traits;
+		//status effects objects
+		JPanel statuses;
+		//abilities list objects
+		JPanel abilitiesList;
+		ArrayList<AbilityPanel> abilityPanelList = new ArrayList<AbilityPanel>();
 		EntityPanel(Entity inEntity)
 		{
 			entity = inEntity;
@@ -209,25 +189,36 @@ public class Interface extends JFrame
 			this.setBorder(BorderFactory.createLineBorder(Color.RED));
 			this.setLayout(new BorderLayout());
 			//name and health fields
-			JPanel header = new JPanel();
+			header = new JPanel();
 			header.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			nameLabel = new JLabel();
 			header.add(nameLabel,BorderLayout.NORTH);
 			healthLabel = new JLabel();
 			header.add(healthLabel,BorderLayout.CENTER);
+			targetButton = new EntitySelectListener(this.entity);
+			header.add(targetButton);
 			this.add(header, BorderLayout.NORTH);
 			//traits
-			JPanel traits = new JPanel();
+			traits = new JPanel();
 			traits.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			traits.add(new JLabel("Traits"),BorderLayout.NORTH);
 			this.add(traits,BorderLayout.WEST);
 			//status effects
-			JPanel statuses = new JPanel();
+			statuses = new JPanel();
 			statuses.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			statuses.add(new JLabel("Status Effects"),BorderLayout.EAST);
 			this.add(statuses,BorderLayout.EAST);
 			this.updateStats(entity);
-			
+			//abilities
+			ArrayList<Ability> abilities = entity.getAbilities();
+			abilitiesList = new JPanel();
+			for (int x = 0; x < abilities.size(); x++)
+			{
+				AbilityPanel abilityPanel = new AbilityPanel(abilities.get(x));
+				abilityPanelList.add(abilityPanel);
+				abilitiesList.add(abilityPanel);
+			}
+			this.add(abilitiesList,BorderLayout.CENTER);
 			/* Layout Notes:
 			 * North: Entity name, health
 			 * Center: Entity abilities
@@ -236,21 +227,194 @@ public class Interface extends JFrame
 			 * South: Sub-entities (summons)
 			 */
 		}
-		//updates the panel's stat fields
+		//updates the panel's stat fields (may be deprecated later)
 		void updateStats(Entity entity) 
 		{
 			nameLabel.setText(entity.getName()+" "+entity.getTeam());
 			healthLabel.setText(entity.getHealth()+"/"+entity.getMaximumHealth()+" HP");
 		}
+		//enables entityselectlistener and disables abilityselectlisteners
+		void toggleEntitySelectors() 
+		{
+			this.targetButton.setEnabled(true);
+			for (int x = 0; x < abilityPanelList.size(); x++) 
+			{
+				AbilityPanel currentPanel = abilityPanelList.get(x);
+				currentPanel.activateButton.setEnabled(false);
+			}
+		}
+		//disables entityselectlistener and enables abilityselectlisteners
+		void toggleAbilitySelectors() 
+		{
+			this.targetButton.setEnabled(false);
+			for (int x = 0; x < abilityPanelList.size(); x++) 
+			{
+				AbilityPanel currentPanel = abilityPanelList.get(x);
+				currentPanel.activateButton.setEnabled(true);
+			}
+		}
+		//panel depicting an ability
+		class AbilityPanel extends JPanel 
+		{
+			private static final long serialVersionUID = 1L;
+			Ability ability;
+			AbilitySelectListener activateButton;
+			AbilityPanel(Ability a) 
+			{
+				ability = a;
+				this.setPreferredSize(new Dimension(450,30));
+				this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+				this.setLayout(new BorderLayout());
+				//ability name
+				this.add(new JLabel(a.abilityName));
+				//button to activate ability if valid
+				activateButton = new AbilitySelectListener(ability);
+				this.add(activateButton,BorderLayout.EAST);
+			}
+		}
+		//button that selects an ability
+		class AbilitySelectListener extends JButton implements ActionListener
+		{
+			private static final long serialVersionUID = 1L;
+			Ability ability;
+			AbilitySelectListener(Ability a) 
+			{
+				ability = a;
+				this.setText("Activate Ability");
+				this.addActionListener(this);
+			}
+			public void actionPerformed(ActionEvent arg0)
+			{
+				Interface.this.mainList.activateTargetting(ability);
+				//activates selection buttons on all entity panels
+			}
+		}
+		//button that selects an ability target
+		public class EntitySelectListener extends JButton implements ActionListener
+		{
+			private static final long serialVersionUID = 1L;
+			Entity entity;
+			EntitySelectListener(Entity e) 
+			{
+				entity = e;
+				this.setText("Select");
+				this.addActionListener(this);
+			}
+			public void actionPerformed(ActionEvent arg0)
+			{
+				Interface.this.mainList.triggerAbility(entity);
+				EntityPanel.this.updateStats(EntityPanel.this.entity);
+			}
+		}
 	}
-	
+
 	//panel for entity data input
-	class EntityInputPanel extends JPanel
+	class EntityInputInterface extends JPanel
 	{
-		EntityInputPanel() 
+		private static final long serialVersionUID = 1L;
+		EntityInputInterface() 
 		{
 			this.add(new JLabel("Hello World"));
 		}
 	}
+	//sidebar buttons
 	
+	//button to load entities from a file
+	class LoadButton extends JButton implements ActionListener 
+	{
+		private static final long serialVersionUID = 1L;
+		LoadButton() 
+		{
+			this.setText("Load");
+			this.addActionListener(this);
+		}
+		@SuppressWarnings("unused")
+		public void actionPerformed(ActionEvent arg0)
+		{
+			int returnVal = fileSelector.showOpenDialog(this);
+			File file = fileSelector.getSelectedFile();
+		}
+	}
+	//button that saves entities to a file
+	class SaveButton extends JButton implements ActionListener 
+	{
+		private static final long serialVersionUID = 1L;
+		SaveButton() 
+		{
+			this.setText("Save");
+			this.addActionListener(this);
+		}
+		@SuppressWarnings("unused")
+		public void actionPerformed(ActionEvent arg0)
+		{
+			int returnVal = fileSelector.showSaveDialog(this);
+		}
+	}
+	//button to open options menu
+	class OptionsButton extends JButton implements ActionListener 
+	{
+		private static final long serialVersionUID = 1L;
+		OptionsButton() 
+		{
+			this.setText("Options");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0) 
+		{
+			
+		}
+	}
+	//button to add an entity to the entity list
+	class AddEntityButton extends JButton implements ActionListener
+	{
+		private static final long serialVersionUID = 1L;
+		AddEntityButton() 
+		{
+			this.setText("Add Entity");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0)
+		{
+			//create a popup window to input entity data
+			EntityInputInterface popup = new EntityInputInterface();
+			JOptionPane.showMessageDialog(null, popup);
+		}
+	}
+	//button to perform a manual action
+	class ActionButton extends JButton implements ActionListener
+	{
+		private static final long serialVersionUID = 1L;
+		ActionButton() 
+		{
+			this.setText("Perform Action");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0)
+		{
+			
+		}
+	}
+	//button that starts/ends round of actions
+	class StartRoundButton extends JButton implements ActionListener 
+	{
+		private static final long serialVersionUID = 1L;
+		StartRoundButton() 
+		{
+			this.setText("Start Round");
+			this.addActionListener(this);
+		}
+		public void actionPerformed(ActionEvent arg0)
+		{
+			if (battleHandler.roundInProgress == false)
+			{
+				this.setText("End Round");
+				battleHandler.startRound();
+			}
+			else
+			{
+				this.setText("Start Round");
+				battleHandler.endRound();
+			}
+		}
+	}
 }
