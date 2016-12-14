@@ -291,7 +291,7 @@ public class Interface extends JFrame
 			{
 				ability = a;
 				this.setText("Activate Ability");
-				this.setEnabled(false);
+				this.setEnabled(true);
 				this.addActionListener(this);
 			}
 			public void actionPerformed(ActionEvent arg0)

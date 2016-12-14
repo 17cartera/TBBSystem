@@ -17,5 +17,4 @@ A system designed to handle complex turn-based strategy game mechanics. Includes
 # Today's Goal:
 *Fix GUI bugs (done)
 *Improve functionality for targets dying (done)
-*Add round handling
 *Improve referencing between classes
