@@ -52,6 +52,7 @@ public class BattleHandler
 			Entity entity = entityList.get(n);
 			entity.startRound();
 		}
+		gameScreen.mainList.refreshActivations();
 	}
 	public void endRound()
 	{
@@ -67,7 +68,10 @@ public class BattleHandler
 				System.out.println(entityList.size() + " Entities remaining");
 			}
 			else
-			entity.endRound();
+			{
+				entity.endRound();
+			}
+			gameScreen.mainList.refreshActivations();
 		}
 	}
 }

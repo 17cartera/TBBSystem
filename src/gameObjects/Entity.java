@@ -1,5 +1,8 @@
 package gameObjects;
 
+import gameObjects.Ability.ABILITY_TIMING;
+import gameObjects.Ability.AbilityEffect;
+
 import java.util.ArrayList;
 
 /*
@@ -25,7 +28,10 @@ public class Entity
 		maxHealth = mhealth;
 		health = mhealth;
 	}
-	
+	public void addAbility(ABILITY_TIMING t, AbilityEffect e) 
+	{
+		abilities.add(new Ability(t,e));
+	}
 	//adds an ability to the entity
 	public void addAbility(Ability a) 
 	{
@@ -52,12 +58,11 @@ public class Entity
 			//dead entities are not removed immediately due to abilities relating to dead entities
 		}
 	}
-	//sets isActive to true (will later run passives)
+	//signals the entity that the round started or ended
 	public void startRound() 
 	{
 		isActive = true;
 	}
-	//sets isActive to false (will later run passives)
 	public void endRound() 
 	{
 		isActive = false;

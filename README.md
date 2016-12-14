@@ -18,3 +18,11 @@ A system designed to handle complex turn-based strategy game mechanics. Includes
 *Fix GUI bugs (done)
 *Improve functionality for targets dying (done)
 *Improve referencing between classes
+
+# Changelog:
+12/14/16:
+*Attempted to add round support
+
+12/13/16: Started changelog
+*Added handling for entity death
+*Fixed GUI bugs

@@ -52,4 +52,19 @@ public class Ability
 			target.takeDamage(damage);
 		}
 	}
+	//class for a condition that can be used in an ability
+	public class AbilityCondition
+	{
+		
+	}
+	//class to designate what an ability targets
+	public class AbilityTarget 
+	{
+		
+	}
+	//class to designate when an ability activates
+	public class AbilityTiming 
+	{
+		
+	}
 }

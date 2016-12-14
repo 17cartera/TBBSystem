@@ -82,6 +82,7 @@ public class Interface extends JFrame
 	class EntityList extends JScrollPane
 	{
 		private static final long serialVersionUID = 1L;
+		public boolean targetMode = false; //true if ability is currently being targeted, otherwise false
 		public Ability activeAbility = null; //holds the currently selected ability (if any)
 		public Entity activeEntity = null; //holds the currently select entity (if any)
 		public ArrayList<EntityPanel> entityPanelList = new ArrayList<EntityPanel>();
@@ -134,28 +135,45 @@ public class Interface extends JFrame
 				}
 			}
 		}
+		//refreshes buttons, turning them on or off as needed
+		void refreshActivations() 
+		{
+			if (!targetMode) 
+			{
+				for (int x = 0; x < entityPanelList.size(); x++) 
+				{
+					EntityPanel currentPanel = entityPanelList.get(x);
+					currentPanel.disableEntitySelectors();
+					currentPanel.enableAbilitySelectors();
+				}
+			}
+			else
+			{
+				for (int x = 0; x < entityPanelList.size(); x++) 
+				{
+					EntityPanel currentPanel = entityPanelList.get(x);
+					currentPanel.enableEntitySelectors();
+					currentPanel.disableAbilitySelectors();
+				}
+			}
+		}
 		//implements the target selection system (needs a better name)
-		void activateTargetting(Ability a) 
+		void activateTargeting(Ability a) 
 		{
 			activeAbility = a;
-			for (int x = 0; x < entityPanelList.size(); x++) 
-			{
-				EntityPanel currentPanel = entityPanelList.get(x);
-				currentPanel.enableEntitySelectors();
-				currentPanel.disableAbilitySelectors();
-			}
-			this.revalidate();
+			targetMode = true;
+			refreshActivations();
+			//currentPanel.enableEntitySelectors();
+			//currentPanel.disableAbilitySelectors();
+			
 		}
 		//disables target selection system (needs a better name)
-		void deactivateTargetting() 
+		void deactivateTargeting() 
 		{
-			for (int x = 0; x < entityPanelList.size(); x++) 
-			{
-				EntityPanel currentPanel = entityPanelList.get(x);
-				currentPanel.disableEntitySelectors();
-				currentPanel.enableAbilitySelectors();
-			}
-			this.revalidate();
+			targetMode = false;
+			refreshActivations();
+			//currentPanel.disableEntitySelectors();
+			//currentPanel.enableAbilitySelectors();
 		}
 		//triggers an ability onto a target, and then resets the target selection system
 		void triggerAbility(Entity e) 
@@ -164,8 +182,9 @@ public class Interface extends JFrame
 			activeAbility.activateAbility(activeEntity);
 			System.out.println("Target health: " + activeEntity.getHealth()); //test line
 			this.revalidate();
-			this.deactivateTargetting();
+			this.deactivateTargeting();
 		}
+
 	}
 	//panel listing entity stats
 	class EntityPanel extends JPanel
@@ -247,6 +266,7 @@ public class Interface extends JFrame
 		}
 		void enableAbilitySelectors() 
 		{
+			if (entity.canAct())
 			for (int x = 0; x < abilityPanelList.size(); x++) 
 			{
 				AbilityPanel currentPanel = abilityPanelList.get(x);
@@ -291,12 +311,12 @@ public class Interface extends JFrame
 			{
 				ability = a;
 				this.setText("Activate Ability");
-				this.setEnabled(true);
+				this.setEnabled(false);
 				this.addActionListener(this);
 			}
 			public void actionPerformed(ActionEvent arg0)
 			{
-				Interface.this.mainList.activateTargetting(ability);
+				Interface.this.mainList.activateTargeting(ability);
 				//activates selection buttons on all entity panels
 			}
 		}
