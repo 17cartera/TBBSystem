@@ -138,6 +138,29 @@ public class Interface extends JFrame
 		//refreshes buttons, turning them on or off as needed
 		void refreshActivations() 
 		{
+			/* Planned structure:
+			 * For each entity:
+			 * if (!targetMode && entity.canAct())
+			 * //activate targeting
+			 * else
+			 * //deactivate targeting
+			 */
+			for (int x = 0; x < entityPanelList.size(); x++) 
+			{
+				EntityPanel currentPanel = entityPanelList.get(x);
+				if (!targetMode && currentPanel.entity.canAct()) 
+				{
+					currentPanel.enableAbilitySelectors();
+					currentPanel.disableEntitySelectors();
+				}
+				else 
+				{
+					currentPanel.disableAbilitySelectors();
+					if (targetMode)
+					currentPanel.enableEntitySelectors();
+				}
+			}
+			/*
 			if (!targetMode) 
 			{
 				for (int x = 0; x < entityPanelList.size(); x++) 
@@ -156,6 +179,7 @@ public class Interface extends JFrame
 					currentPanel.disableAbilitySelectors();
 				}
 			}
+			*/
 		}
 		//implements the target selection system (needs a better name)
 		void activateTargeting(Ability a) 
