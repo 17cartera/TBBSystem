@@ -14,12 +14,10 @@ A system designed to handle complex turn-based strategy game mechanics. Includes
 *Load/Save Files
 *More ability mechanics
 
-# Today's Goal:
-*Fix GUI bugs (done)
-*Improve functionality for targets dying (done)
-*Improve referencing between classes
-
 # Changelog:
+12/22/16
+*Rounds no end properly
+
 12/14/16:
 *Attempted to add round support
 
