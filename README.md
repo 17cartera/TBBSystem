@@ -16,7 +16,7 @@ A system designed to handle complex turn-based strategy game mechanics. Includes
 
 # Changelog:
 12/22/16
-*Rounds no end properly
+*Rounds now end properly
 
 12/14/16:
 *Attempted to add round support
