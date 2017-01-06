@@ -1,7 +1,8 @@
 # TBBSystem
 A system designed to handle complex turn-based strategy game mechanics. Includes a basic GUI.
 
-
+# Branch Objective:
+Refactor code to improve readability and performance.
 
 # Current Features:
 *Basic GUI
