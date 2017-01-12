@@ -148,7 +148,7 @@ public class Interface extends JFrame
 			for (int x = 0; x < entityPanelList.size(); x++) 
 			{
 				EntityPanel currentPanel = entityPanelList.get(x);
-				if (!targetMode && currentPanel.entity.canAct()) 
+				if (!targetMode) 
 				{
 					currentPanel.enableAbilitySelectors();
 					currentPanel.disableEntitySelectors();
@@ -156,30 +156,9 @@ public class Interface extends JFrame
 				else 
 				{
 					currentPanel.disableAbilitySelectors();
-					if (targetMode)
 					currentPanel.enableEntitySelectors();
 				}
 			}
-			/*
-			if (!targetMode) 
-			{
-				for (int x = 0; x < entityPanelList.size(); x++) 
-				{
-					EntityPanel currentPanel = entityPanelList.get(x);
-					currentPanel.disableEntitySelectors();
-					currentPanel.enableAbilitySelectors();
-				}
-			}
-			else
-			{
-				for (int x = 0; x < entityPanelList.size(); x++) 
-				{
-					EntityPanel currentPanel = entityPanelList.get(x);
-					currentPanel.enableEntitySelectors();
-					currentPanel.disableAbilitySelectors();
-				}
-			}
-			*/
 		}
 		//implements the target selection system (needs a better name)
 		void activateTargeting(Ability a) 
@@ -290,7 +269,7 @@ public class Interface extends JFrame
 		}
 		void enableAbilitySelectors() 
 		{
-			if (entity.canAct())
+			if (entity.canAct()) //abilities are not enabled if entity cannot act
 			for (int x = 0; x < abilityPanelList.size(); x++) 
 			{
 				AbilityPanel currentPanel = abilityPanelList.get(x);
@@ -326,7 +305,6 @@ public class Interface extends JFrame
 			}
 		}
 		//button that selects an ability
-		//TODO: should not be enabled if the entity cannot take an action
 		class AbilitySelectListener extends JButton implements ActionListener
 		{
 			private static final long serialVersionUID = 1L;

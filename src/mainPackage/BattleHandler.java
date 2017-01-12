@@ -5,6 +5,7 @@ import gameObjects.Entity;
 
 import java.util.ArrayList;
 
+import abilityAttributes.ActionTiming;
 import abilityAttributes.DamageEffect;
 
 /*
@@ -43,8 +44,8 @@ public class BattleHandler
 		alex.addAbility(new Ability());
 		this.addEntity(alex);
 		Entity tank = new Entity(entityList,"Tank",50);
-		tank.addAbility(new Ability(Ability.ABILITY_TIMING.ACTION,new DamageEffect(10)));
-		tank.addAbility(new Ability(Ability.ABILITY_TIMING.ACTION,new DamageEffect(20)));
+		tank.addAbility("Fire Cannon",new ActionTiming(),new DamageEffect(10));
+		tank.addAbility("Tank Shock",new ActionTiming(),new DamageEffect(20));
 		this.addEntity(tank);
 		//ability test code
 		gameScreen.mainList.updateList(entityList);

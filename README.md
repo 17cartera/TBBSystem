@@ -7,7 +7,6 @@ Refactor code to improve readability and performance.
 # Current Features:
 *Basic GUI
 *File Loading Menu (functionality missing)
-*Secret Test Feature
 *Basic entity mechanics
 
 # TODO:
@@ -16,13 +15,16 @@ Refactor code to improve readability and performance.
 *More ability mechanics
 
 # Known Bugs:
-*If multiple entities are dead, only one is removed when the round ends
+*If multiple entities are dead at round end, one of the dead entities is not removed properly
 *Interface does not scale to handle multiple abilities properly
 
 # Changelog:
 1/12/17
+*Added action mechanics: an entity can only make one action during its turn
 *Moved all ability subclasses to new package, abilityAttributes
 *Added new entity to test field to test custom abilities
+*Deprecated ABILITY_TIMING enum to use the AbilityTiming class
+*Added new ability constructor to allow for custom names
 
 12/22/16
 *Rounds now end properly

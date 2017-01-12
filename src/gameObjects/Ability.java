@@ -1,6 +1,8 @@
 package gameObjects;
 
 import abilityAttributes.AbilityEffect;
+import abilityAttributes.AbilityTiming;
+import abilityAttributes.ActionTiming;
 import abilityAttributes.DamageEffect;
 
 /*
@@ -10,29 +12,38 @@ import abilityAttributes.DamageEffect;
  */
 public class Ability
 {
-	//ability timing (when ability is activated)
-	//ability conditions (conditions that can modify the ability or its effects)
-	//ability effect (what effect the ability has when activated)
-	public enum ABILITY_TIMING {ACTION,REACTION,OTHER}
-	public String abilityName;
-	public ABILITY_TIMING timing;
-	public AbilityEffect effect;
+	public String abilityName; //caption of the ability (recommended parameter)
+	public Entity parentEntity; //the entity that this ability belongs to (recommended parameter)
+	public AbilityTiming timing; //when the ability is useable (mandatory parameter)
+	public AbilityEffect effect; //effect of the ability (mandatory parameter)
+	//public AbilityTarget target; //target of the ability (optional parameter, set to a default)
+	//public AbilityCondition conditions //conditions on how the ability can be used (optional parameter)
 	//test method
 	public Ability() 
 	{
 		abilityName = "Generic Ability";
-		timing = ABILITY_TIMING.ACTION;
+		timing = new ActionTiming();
 		effect = new DamageEffect(5);
 	}
+
 	//creates a custom ability
-	public Ability(ABILITY_TIMING t, AbilityEffect e) 
+	public Ability(AbilityTiming t, AbilityEffect e) 
 	{
 		abilityName = "Custom Ability";
 		timing = t;
 		effect = e;
 	}
+	//creates a custom ability with custom name
+	public Ability(String name, AbilityTiming t, AbilityEffect e) 
+	{
+		abilityName = name;
+		timing = t;
+		effect = e;
+	}
+	//activates the ability
 	public void activateAbility(Entity target) 
 	{
 		effect.activateEffect(target);
+		parentEntity.isActive = false;
 	}
 }

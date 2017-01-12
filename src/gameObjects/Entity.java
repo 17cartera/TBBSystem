@@ -1,10 +1,9 @@
 package gameObjects;
 
-import gameObjects.Ability.ABILITY_TIMING;
-
 import java.util.ArrayList;
 
 import abilityAttributes.AbilityEffect;
+import abilityAttributes.AbilityTiming;
 
 /*
  * entity objects, with attributes and abilities
@@ -29,13 +28,22 @@ public class Entity
 		maxHealth = mhealth;
 		health = mhealth;
 	}
-	public void addAbility(ABILITY_TIMING t, AbilityEffect e) 
+	//adds an ability to the entity	(multiple methods to match possible constructors)
+	public void addAbility(AbilityTiming t, AbilityEffect e) 
 	{
-		abilities.add(new Ability(t,e));
+		Ability a = new Ability(t,e);
+		a.parentEntity = this;
+		abilities.add(a);
 	}
-	//adds an ability to the entity
+	public void addAbility(String name, AbilityTiming t, AbilityEffect e) 
+	{
+		Ability a = new Ability(name,t,e);
+		a.parentEntity = this;
+		abilities.add(a);
+	}
 	public void addAbility(Ability a) 
 	{
+		a.parentEntity = this;
 		abilities.add(a);
 	}
 	//returns abilities list
