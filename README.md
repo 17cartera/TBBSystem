@@ -16,6 +16,9 @@ Refactor code to improve readability and performance.
 *More ability mechanics
 
 # Changelog:
+1/12/17
+*Moved all ability subclasses to new package, abilityAttributes
+
 12/22/16
 *Rounds now end properly
 

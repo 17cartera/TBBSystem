@@ -1,9 +1,10 @@
 package gameObjects;
 
 import gameObjects.Ability.ABILITY_TIMING;
-import gameObjects.Ability.AbilityEffect;
 
 import java.util.ArrayList;
+
+import abilityAttributes.AbilityEffect;
 
 /*
  * entity objects, with attributes and abilities

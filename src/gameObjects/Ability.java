@@ -1,4 +1,8 @@
 package gameObjects;
+
+import abilityAttributes.AbilityEffect;
+import abilityAttributes.DamageEffect;
+
 /*
  * Class containing data on abilities possessed by entities
  * TODO: Implement ability subclasses for effects
@@ -30,6 +34,7 @@ public class Ability
 	{
 		effect.activateEffect(target);
 	}
+	/* Moved to separate classes
 	//class for an ability's effect
 	public class AbilityEffect 
 	{
@@ -67,4 +72,5 @@ public class Ability
 	{
 		
 	}
+	*/
 }
