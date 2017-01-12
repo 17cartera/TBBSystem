@@ -1,9 +1,11 @@
 package mainPackage;
 
-import java.util.ArrayList;
-
 import gameObjects.Ability;
 import gameObjects.Entity;
+
+import java.util.ArrayList;
+
+import abilityAttributes.DamageEffect;
 
 /*
  * backend logic system
@@ -40,6 +42,10 @@ public class BattleHandler
 		Entity alex = new Entity(entityList,"Alex",20);
 		alex.addAbility(new Ability());
 		this.addEntity(alex);
+		Entity tank = new Entity(entityList,"Tank",50);
+		tank.addAbility(new Ability(Ability.ABILITY_TIMING.ACTION,new DamageEffect(10)));
+		tank.addAbility(new Ability(Ability.ABILITY_TIMING.ACTION,new DamageEffect(20)));
+		this.addEntity(tank);
 		//ability test code
 		gameScreen.mainList.updateList(entityList);
 	}

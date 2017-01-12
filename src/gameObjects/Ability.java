@@ -27,6 +27,7 @@ public class Ability
 	//creates a custom ability
 	public Ability(ABILITY_TIMING t, AbilityEffect e) 
 	{
+		abilityName = "Custom Ability";
 		timing = t;
 		effect = e;
 	}
@@ -34,43 +35,4 @@ public class Ability
 	{
 		effect.activateEffect(target);
 	}
-	/* Moved to separate classes
-	//class for an ability's effect
-	public class AbilityEffect 
-	{
-		public void activateEffect(Entity target)
-		{
-			//trigger target's reactions?
-			//extended by subclasses
-		}
-	}
-	//damage effect, damages an entity (can potentially be inverted for healing effects)
-	public class DamageEffect extends AbilityEffect 
-	{
-		int damage;
-		public DamageEffect(int damageVal) 
-		{
-			damage = damageVal;
-		}
-		public void activateEffect(Entity target) 
-		{
-			target.takeDamage(damage);
-		}
-	}
-	//class for a condition that can be used in an ability
-	public class AbilityCondition
-	{
-		
-	}
-	//class to designate what an ability targets
-	public class AbilityTarget 
-	{
-		
-	}
-	//class to designate when an ability activates
-	public class AbilityTiming 
-	{
-		
-	}
-	*/
 }

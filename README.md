@@ -15,9 +15,14 @@ Refactor code to improve readability and performance.
 *Load/Save Files
 *More ability mechanics
 
+# Known Bugs:
+*If multiple entities are dead, only one is removed when the round ends
+*Interface does not scale to handle multiple abilities properly
+
 # Changelog:
 1/12/17
 *Moved all ability subclasses to new package, abilityAttributes
+*Added new entity to test field to test custom abilities
 
 12/22/16
 *Rounds now end properly
