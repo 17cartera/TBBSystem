@@ -1,13 +1,15 @@
 package mainPackage;
 
-import java.util.ArrayList;
-
 import gameObjects.Ability;
 import gameObjects.Entity;
 
+import java.util.ArrayList;
+
+import abilityAttributes.ActionTiming;
+import abilityAttributes.DamageEffect;
+
 /*
  * backend logic system
- * TODO: improve things
 */
 public class BattleHandler
 {
@@ -40,6 +42,10 @@ public class BattleHandler
 		Entity alex = new Entity(entityList,"Alex",20);
 		alex.addAbility(new Ability());
 		this.addEntity(alex);
+		Entity tank = new Entity(entityList,"Tank",50);
+		tank.addAbility("Fire Cannon",new ActionTiming(),new DamageEffect(10));
+		tank.addAbility("Tank Shock",new ActionTiming(),new DamageEffect(20));
+		this.addEntity(tank);
 		//ability test code
 		gameScreen.mainList.updateList(entityList);
 	}
@@ -58,7 +64,7 @@ public class BattleHandler
 	{
 		//entities do end-of-round effects, any unused actions are lost
 		roundInProgress = false;
-		for (int n = 0; n < entityList.size(); n++) 
+		for (int n = 0; n < entityList.size(); n++)//TODO problem: entityList.size goes down as entities are killed
 		{
 			Entity entity = entityList.get(n);
 			if (entity.isDead())
@@ -66,6 +72,7 @@ public class BattleHandler
 				entityList.remove(entity);
 				gameScreen.mainList.updateList(entityList);
 				System.out.println(entityList.size() + " Entities remaining");
+				n--;
 			}
 			else
 			{

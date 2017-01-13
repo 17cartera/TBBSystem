@@ -27,7 +27,6 @@ import javax.swing.UIManager;
 
 /*
  * main game interface, sends commands back to battlehandler
- * TODO: GUI improvements, handle more mechanics
  */
 public class Interface extends JFrame
 {
@@ -138,48 +137,26 @@ public class Interface extends JFrame
 		//refreshes buttons, turning them on or off as needed
 		void refreshActivations() 
 		{
-			/* Planned structure:
-			 * For each entity:
-			 * if (!targetMode && entity.canAct())
-			 * //activate targeting
-			 * else
-			 * //deactivate targeting
-			 */
 			for (int x = 0; x < entityPanelList.size(); x++) 
 			{
 				EntityPanel currentPanel = entityPanelList.get(x);
-				if (!targetMode && currentPanel.entity.canAct()) 
+				if (!targetMode) 
 				{
-					currentPanel.enableAbilitySelectors();
+					//if targetmode is false, remove entity selectors and test ability selectors
 					currentPanel.disableEntitySelectors();
+					if (currentPanel.entity.canAct()) 
+						currentPanel.enableAbilitySelectors();
+					else 
+						currentPanel.disableAbilitySelectors();
 				}
 				else 
 				{
+					//if targetMode is true, disable ability selectors and enable entity selectors
 					currentPanel.disableAbilitySelectors();
-					if (targetMode)
+						if (activeAbility.isValidTarget(currentPanel.entity))
 					currentPanel.enableEntitySelectors();
 				}
 			}
-			/*
-			if (!targetMode) 
-			{
-				for (int x = 0; x < entityPanelList.size(); x++) 
-				{
-					EntityPanel currentPanel = entityPanelList.get(x);
-					currentPanel.disableEntitySelectors();
-					currentPanel.enableAbilitySelectors();
-				}
-			}
-			else
-			{
-				for (int x = 0; x < entityPanelList.size(); x++) 
-				{
-					EntityPanel currentPanel = entityPanelList.get(x);
-					currentPanel.enableEntitySelectors();
-					currentPanel.disableAbilitySelectors();
-				}
-			}
-			*/
 		}
 		//implements the target selection system (needs a better name)
 		void activateTargeting(Ability a) 
@@ -290,7 +267,7 @@ public class Interface extends JFrame
 		}
 		void enableAbilitySelectors() 
 		{
-			if (entity.canAct())
+			if (entity.canAct()) //abilities are not enabled if entity cannot act
 			for (int x = 0; x < abilityPanelList.size(); x++) 
 			{
 				AbilityPanel currentPanel = abilityPanelList.get(x);
@@ -326,7 +303,6 @@ public class Interface extends JFrame
 			}
 		}
 		//button that selects an ability
-		//TODO: should not be enabled if the entity cannot take an action
 		class AbilitySelectListener extends JButton implements ActionListener
 		{
 			private static final long serialVersionUID = 1L;
