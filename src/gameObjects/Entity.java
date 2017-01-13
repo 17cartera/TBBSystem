@@ -7,7 +7,6 @@ import abilityAttributes.AbilityTiming;
 
 /*
  * entity objects, with attributes and abilities
- * TODO: add ability-related methods
  */
 public class Entity
 {

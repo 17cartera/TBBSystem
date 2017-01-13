@@ -10,7 +10,6 @@ import abilityAttributes.DamageEffect;
 
 /*
  * backend logic system
- * TODO: improve things
 */
 public class BattleHandler
 {
@@ -65,7 +64,7 @@ public class BattleHandler
 	{
 		//entities do end-of-round effects, any unused actions are lost
 		roundInProgress = false;
-		for (int n = 0; n < entityList.size(); n++) 
+		for (int n = 0; n < entityList.size(); n++)//TODO problem: entityList.size goes down as entities are killed
 		{
 			Entity entity = entityList.get(n);
 			if (entity.isDead())
@@ -73,6 +72,7 @@ public class BattleHandler
 				entityList.remove(entity);
 				gameScreen.mainList.updateList(entityList);
 				System.out.println(entityList.size() + " Entities remaining");
+				n--;
 			}
 			else
 			{

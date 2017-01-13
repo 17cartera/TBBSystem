@@ -7,8 +7,6 @@ import abilityAttributes.DamageEffect;
 
 /*
  * Class containing data on abilities possessed by entities
- * TODO: Implement ability subclasses for effects
- * TODO: Improve referencing, potentially integrate into Entity class
  */
 public class Ability
 {
@@ -40,9 +38,16 @@ public class Ability
 		timing = t;
 		effect = e;
 	}
+	//test if the entity is a valid target of this ability
+	public boolean isValidTarget(Entity target) 
+	{
+		//will use abilityTarget class
+		return (target != parentEntity);
+	}
 	//activates the ability
 	public void activateAbility(Entity target) 
 	{
+		if (isValidTarget(target))
 		effect.activateEffect(target);
 		parentEntity.isActive = false;
 	}

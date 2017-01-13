@@ -27,7 +27,6 @@ import javax.swing.UIManager;
 
 /*
  * main game interface, sends commands back to battlehandler
- * TODO: GUI improvements, handle more mechanics
  */
 public class Interface extends JFrame
 {
@@ -138,24 +137,23 @@ public class Interface extends JFrame
 		//refreshes buttons, turning them on or off as needed
 		void refreshActivations() 
 		{
-			/* Planned structure:
-			 * For each entity:
-			 * if (!targetMode && entity.canAct())
-			 * //activate targeting
-			 * else
-			 * //deactivate targeting
-			 */
 			for (int x = 0; x < entityPanelList.size(); x++) 
 			{
 				EntityPanel currentPanel = entityPanelList.get(x);
 				if (!targetMode) 
 				{
-					currentPanel.enableAbilitySelectors();
+					//if targetmode is false, remove entity selectors and test ability selectors
 					currentPanel.disableEntitySelectors();
+					if (currentPanel.entity.canAct()) 
+						currentPanel.enableAbilitySelectors();
+					else 
+						currentPanel.disableAbilitySelectors();
 				}
 				else 
 				{
+					//if targetMode is true, disable ability selectors and enable entity selectors
 					currentPanel.disableAbilitySelectors();
+						if (activeAbility.isValidTarget(currentPanel.entity))
 					currentPanel.enableEntitySelectors();
 				}
 			}
