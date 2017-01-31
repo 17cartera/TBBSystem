@@ -223,11 +223,13 @@ public class Interface extends JFrame
 			this.add(header, BorderLayout.NORTH);
 			//traits
 			traits = new JPanel();
+			traits.setPreferredSize(new Dimension(100,100));
 			traits.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			traits.add(new JLabel("Traits"),BorderLayout.NORTH);
 			this.add(traits,BorderLayout.WEST);
 			//status effects
 			statuses = new JPanel();
+			statuses.setPreferredSize(new Dimension(100,100));
 			statuses.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 			statuses.add(new JLabel("Status Effects"),BorderLayout.EAST);
 			this.add(statuses,BorderLayout.EAST);
@@ -292,7 +294,7 @@ public class Interface extends JFrame
 			AbilityPanel(Ability a) 
 			{
 				ability = a;
-				this.setPreferredSize(new Dimension(450,30));
+				this.setPreferredSize(new Dimension(350,30));
 				this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 				this.setLayout(new BorderLayout());
 				//ability name

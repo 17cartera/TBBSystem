@@ -11,6 +11,7 @@ Refactor code to improve readability and performance.
 
 # TODO:
 *Improve GUI
+-Goals: Show abilities in a cleaner fashion and minimize white space
 *Load/Save Files
 *More ability mechanics
 
